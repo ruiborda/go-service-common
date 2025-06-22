@@ -1,9 +1,10 @@
 package dto
 
 type Response[T any] struct {
-	Status int       `json:"status"`
-	Body   T         `json:"body"`
-	Errors *[]*Error `json:"errors,omitempty"`
+	Status  int       `json:"status"`
+	Message *string   `json:"message,omitempty"`
+	Body    T         `json:"body"`
+	Errors  *[]*Error `json:"errors,omitempty"`
 }
 
 func ResponseBuilder[T any](status int, body T) *Response[T] {
@@ -21,6 +22,11 @@ func (r *Response[T]) AddError(err *Error) *Response[T] {
 
 func (r *Response[T]) SetStatus(status int) *Response[T] {
 	r.Status = status
+	return r
+}
+
+func (r *Response[T]) SetMessage(message string) *Response[T] {
+	r.Message = &message
 	return r
 }
 
