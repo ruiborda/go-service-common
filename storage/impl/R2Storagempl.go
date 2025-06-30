@@ -22,7 +22,7 @@ type R2StorageImpl struct {
 	accessKeySecret string
 }
 
-func NewR2RepositoryImpl(
+func NewR2StorageImpl(
 	bucketName string,
 	accountId string,
 	accessKeyId string,
