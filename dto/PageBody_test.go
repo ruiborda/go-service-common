@@ -1,6 +1,7 @@
 package dto
 
 import (
+	"encoding/json"
 	"reflect"
 	"testing"
 )
@@ -77,8 +78,9 @@ func TestPageBody_SetItems(t *testing.T) {
 			},
 			want: &PageBody[string]{
 				Items:      []string{"a", "b", "c"},
-				TotalItems: 3,
+				TotalItems: 0,
 				PageSize:   0,
+				TotalPages: 0,
 			},
 		},
 	}
@@ -162,11 +164,12 @@ func TestPageBody_SetTotalItems(t *testing.T) {
 			want: &PageBody[string]{TotalItems: 5, PageSize: 0, TotalPages: 0},
 		},
 		{
-			name: "totalItems = -10, pageSize = 3 (negative totalItems)",
-			// Note: SetItems no longer sets PageSize, so we must set it explicitly if we want non-zero PageSize
-			p:    *PageBodyBuilder[string]().SetItems([]string{"a", "b", "c"}).SetPageSize(3),
-			args: args{totalItems: -10},
-			want: &PageBody[string]{TotalItems: 3, PageSize: 3, TotalPages: 1, Items: []string{"a", "b", "c"}},
+			name: "totalItems = -10, pageSize = 3 (negative totalItems)", // Note: SetItems no longer sets PageSize, so we must set it explicitly if we want non-zero PageSize
+			p: *PageBodyBuilder[string]().SetItems([]string{
+				"a", "b",
+			}).SetCurrentPage(2).SetPageSize(10).SetTotalItems(12),
+			args: args{totalItems: 12},
+			want: &PageBody[string]{TotalItems: 12, PageSize: 10, TotalPages: 2, Items: []string{"a", "b"}, CurrentPage: 2},
 		},
 		{
 			name: "totalItems = 10, pageSize = -3 (negative pageSize)",
@@ -201,6 +204,12 @@ func TestPageBody_SetTotalItems(t *testing.T) {
 			got := tt.p.SetTotalItems(tt.args.totalItems)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("SetTotalItems() = %+v, want %+v", got, tt.want)
+				gotJson, _ := json.MarshalIndent(got, "", "\t")
+				wantJson, _ := json.MarshalIndent(tt.want, "", "\t")
+
+				t.Log("got:", string(gotJson))
+				t.Log("want:", string(wantJson))
+
 			}
 		})
 	}

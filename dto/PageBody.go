@@ -3,9 +3,9 @@ package dto
 type PageBody[T any] struct {
 	Items       []T `json:"items"`
 	TotalItems  int `json:"totalItems"`
-	CurrentPage int `json:"currentPage"`
 	TotalPages  int `json:"totalPages"`
-	PageSize    int `json:"pageSize"`
+	CurrentPage int `json:"currentPage"`
+	PageSize    int `json:"pageSize"` // it's request page size
 }
 
 func PageBodyBuilder[T any]() *PageBody[T] {
@@ -19,7 +19,6 @@ func PageBodyBuilder[T any]() *PageBody[T] {
 
 func (p *PageBody[T]) SetItems(items []T) *PageBody[T] {
 	p.Items = items
-	p.SetTotalItems(len(items))
 	return p
 }
 
@@ -38,7 +37,7 @@ func (p *PageBody[T]) SetCurrentPage(currentPage int) *PageBody[T] {
 
 func (p *PageBody[T]) SetTotalItems(totalItems int) *PageBody[T] {
 	if totalItems < 0 {
-		totalItems = p.PageSize
+		totalItems = 1
 	}
 	p.TotalItems = totalItems
 	if p.PageSize > 0 {
