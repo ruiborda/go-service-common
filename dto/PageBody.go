@@ -19,7 +19,7 @@ func PageBodyBuilder[T any]() *PageBody[T] {
 
 func (p *PageBody[T]) SetItems(items []T) *PageBody[T] {
 	p.Items = items
-	p.TotalItems = len(items)
+	p.SetTotalItems(len(items))
 	return p
 }
 
