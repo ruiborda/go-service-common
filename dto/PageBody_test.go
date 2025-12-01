@@ -72,10 +72,13 @@ func TestPageBody_SetItems(t *testing.T) {
 		{
 			name: "Set items with 3 elements",
 			p:    PageBody[string]{},
-			args: args[string]{items: []string{"a", "b", "c"}},
+			args: args[string]{
+				items: []string{"a", "b", "c"},
+			},
 			want: &PageBody[string]{
-				Items:    []string{"a", "b", "c"},
-				PageSize: 3,
+				Items:      []string{"a", "b", "c"},
+				TotalItems: 3,
+				PageSize:   0,
 			},
 		},
 	}
@@ -84,6 +87,34 @@ func TestPageBody_SetItems(t *testing.T) {
 			got := tt.p.SetItems(tt.args.items)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("SetItems() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestPageBody_SetPageSize(t *testing.T) {
+	type args struct {
+		pageSize int
+	}
+	type testCase[T any] struct {
+		name string
+		p    PageBody[T]
+		args args
+		want *PageBody[T]
+	}
+	tests := []testCase[string]{
+		{
+			name: "Set page size to 10",
+			p:    PageBody[string]{},
+			args: args{pageSize: 10},
+			want: &PageBody[string]{PageSize: 10},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.p.SetPageSize(tt.args.pageSize)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SetPageSize() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -132,7 +163,8 @@ func TestPageBody_SetTotalItems(t *testing.T) {
 		},
 		{
 			name: "totalItems = -10, pageSize = 3 (negative totalItems)",
-			p:    *PageBodyBuilder[string]().SetItems([]string{"a", "b", "c"}),
+			// Note: SetItems no longer sets PageSize, so we must set it explicitly if we want non-zero PageSize
+			p:    *PageBodyBuilder[string]().SetItems([]string{"a", "b", "c"}).SetPageSize(3),
 			args: args{totalItems: -10},
 			want: &PageBody[string]{TotalItems: 3, PageSize: 3, TotalPages: 1, Items: []string{"a", "b", "c"}},
 		},

@@ -11,10 +11,11 @@ type PageRequest struct {
 
 func DefaultPageRequest(request *PageRequest) *PageRequest {
 	if request == nil {
-		request = &PageRequest{
+		return &PageRequest{
 			PageNumber: types.Pointer(1),
 			PageSize:   types.Pointer(10),
 			Search:     nil,
+			Sort:       nil,
 		}
 	}
 	if request.PageNumber == nil {
@@ -25,4 +26,25 @@ func DefaultPageRequest(request *PageRequest) *PageRequest {
 	}
 
 	return request
+}
+
+func (pr *PageRequest) GetPageNumber() int {
+	if pr.PageNumber == nil {
+		return 1
+	}
+	return *pr.PageNumber
+}
+
+func (pr *PageRequest) GetPageSize() int {
+	if pr.PageSize == nil {
+		return 10
+	}
+	return *pr.PageSize
+}
+
+func (pr *PageRequest) GetSearch() *string {
+	if pr.Search == nil {
+		return nil
+	}
+	return pr.Search
 }
