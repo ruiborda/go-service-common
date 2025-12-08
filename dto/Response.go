@@ -16,6 +16,9 @@ func ResponseBuilder[T any](status int, body T) *Response[T] {
 }
 
 func (r *Response[T]) AddError(err *Error) *Response[T] {
+	if err == nil {
+		return r
+	}
 	*r.Errors = append(*r.Errors, err)
 	return r
 }
@@ -36,11 +39,21 @@ func (r *Response[T]) SetBody(body T) *Response[T] {
 }
 
 func (r *Response[T]) AddErrors(errors *[]*Error) *Response[T] {
+	if errors == nil {
+		return r
+	}
 	*r.Errors = append(*r.Errors, *errors...)
 	return r
 }
 
 func (r *Response[T]) SetErrors(errors *[]*Error) *Response[T] {
+	if errors == nil {
+		return r
+	}
 	r.Errors = errors
 	return r
+}
+
+func (r *Response[T]) HasErrors() bool {
+	return r.Errors != nil && len(*r.Errors) > 0
 }
