@@ -90,6 +90,22 @@ func (r *Response[T]) HasErrors() bool {
 	return r.Errors != nil && len(*r.Errors) > 0
 }
 
-func (r *Response[T]) Ok() bool {
-	return r.Status >= 200 && r.Status <= 299
+func (r *Response[T]) IsInfo() bool {
+	return r.Status >= 100 && r.Status < 200
+}
+
+func (r *Response[T]) IsOK() bool {
+	return r.Status >= 200 && r.Status < 300
+}
+
+func (r *Response[T]) IsRedirect() bool {
+	return r.Status >= 300 && r.Status < 400
+}
+
+func (r *Response[T]) IsClientError() bool {
+	return r.Status >= 400 && r.Status < 500
+}
+
+func (r *Response[T]) IsServerError() bool {
+	return r.Status >= 500 && r.Status < 600
 }
