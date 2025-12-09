@@ -89,3 +89,7 @@ func (r *Response[T]) SetErrors(errors *[]*Error) *Response[T] {
 func (r *Response[T]) HasErrors() bool {
 	return r.Errors != nil && len(*r.Errors) > 0
 }
+
+func (r *Response[T]) Ok() bool {
+	return r.Status >= 200 && r.Status <= 299
+}
