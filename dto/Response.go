@@ -1,5 +1,9 @@
 package dto
 
+import (
+	"net/http"
+)
+
 type ResponseErrorProvider interface {
 	GetErrors() *[]*Error
 }
@@ -9,6 +13,13 @@ type Response[T any] struct {
 	Message *string   `json:"message,omitempty"`
 	Body    T         `json:"body"`
 	Errors  *[]*Error `json:"errors,omitempty"`
+}
+
+func NewResponse[T any]() *Response[T] {
+	return &Response[T]{
+		Status: http.StatusProcessing,
+		Errors: &[]*Error{},
+	}
 }
 
 func ResponseBuilder[T any](status int, body T) *Response[T] {
