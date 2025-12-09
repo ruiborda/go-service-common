@@ -57,3 +57,10 @@ func (r *Response[T]) SetErrors(errors *[]*Error) *Response[T] {
 func (r *Response[T]) HasErrors() bool {
 	return r.Errors != nil && len(*r.Errors) > 0
 }
+
+func (r *Response[T]) MergeErrors(otherResponse *Response[T]) *Response[T] {
+	if otherResponse == nil || otherResponse.Errors == nil {
+		return r
+	}
+	return r.AddErrors(otherResponse.Errors)
+}
