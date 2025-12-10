@@ -109,3 +109,15 @@ func (r *Response[T]) IsClientError() bool {
 func (r *Response[T]) IsServerError() bool {
 	return r.Status >= 500 && r.Status < 600
 }
+
+func Map[T any, R any](original *Response[T], transform func(T) R) *Response[R] {
+	if original == nil {
+		return nil
+	}
+	return &Response[R]{
+		Status:  original.Status,
+		Message: original.Message,
+		Errors:  original.Errors,
+		Body:    transform(original.Body),
+	}
+}
