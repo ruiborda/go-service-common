@@ -6,7 +6,8 @@ type PageRequest struct {
 	PageNumber *int                 `json:"pageNumber" form:"pageNumber"`
 	PageSize   *int                 `json:"pageSize" form:"pageSize"`
 	Search     *string              `json:"search" form:"search"`
-	Sort       *[]*PageRequestOrder `json:"sort" form:"sort"`
+	Sort       []*PageRequestOrder  `json:"sort" form:"sort"`
+	Filters    []*PageRequestFilter `json:"filters" form:"filters"`
 }
 
 func DefaultPageRequest(request *PageRequest) *PageRequest {
@@ -16,6 +17,7 @@ func DefaultPageRequest(request *PageRequest) *PageRequest {
 			PageSize:   types.Pointer(10),
 			Search:     nil,
 			Sort:       nil,
+			Filters:    nil,
 		}
 	}
 	if request.PageNumber == nil {
@@ -43,8 +45,19 @@ func (pr *PageRequest) GetPageSize() int {
 }
 
 func (pr *PageRequest) GetSearch() *string {
-	if pr.Search == nil {
-		return nil
-	}
 	return pr.Search
+}
+
+func (pr *PageRequest) GetSort() []*PageRequestOrder {
+	if pr.Sort == nil {
+		return []*PageRequestOrder{}
+	}
+	return pr.Sort
+}
+
+func (pr *PageRequest) GetFilters() []*PageRequestFilter {
+	if pr.Filters == nil {
+		return []*PageRequestFilter{}
+	}
+	return pr.Filters
 }

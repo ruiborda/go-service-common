@@ -22,15 +22,19 @@ func TestDefaultPageRequest(t *testing.T) {
 				PageNumber: types.Pointer(1),
 				PageSize:   types.Pointer(10),
 				Search:     nil,
+				Sort:       nil,
+				Filters:    nil,
 			},
 		},
 		{
-			name: "Default values for nil request",
+			name: "Default values for empty request",
 			args: args{request: &PageRequest{}},
 			want: &PageRequest{
 				PageNumber: types.Pointer(1),
 				PageSize:   types.Pointer(10),
 				Search:     nil,
+				Sort:       nil,
+				Filters:    nil,
 			},
 		},
 	}
