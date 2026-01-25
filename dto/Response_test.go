@@ -112,3 +112,72 @@ func TestMapWithoutBody(t *testing.T) {
 		})
 	}
 }
+
+func TestMapWithBody(t *testing.T) {
+	message := "Operación exitosa"
+	errors := &[]*Error{{Message: "Error de prueba", Field: "Test"}}
+
+	type args[T any, R any] struct {
+		original *Response[T]
+		newBody  R
+	}
+
+	type testCase[T any, R any] struct {
+		name string
+		args args[T, R]
+		want *Response[R]
+	}
+
+	tests := []testCase[string, int]{
+		{
+			name: "Debe retornar nil si el response original es nil",
+			args: args[string, int]{
+				original: nil,
+				newBody:  100,
+			},
+			want: nil,
+		},
+		{
+			name: "Debe reemplazar el body con el nuevo valor (123) y conservar status 200",
+			args: args[string, int]{
+				original: &Response[string]{
+					Status: http.StatusOK,
+					Body:   "Texto original",
+					Errors: &[]*Error{},
+				},
+				newBody: 123,
+			},
+			want: &Response[int]{
+				Status: http.StatusOK,
+				Body:   123,
+				Errors: &[]*Error{},
+			},
+		},
+		{
+			name: "Debe conservar Mensaje, Errores y Status al cambiar el body",
+			args: args[string, int]{
+				original: &Response[string]{
+					Status:  http.StatusBadRequest,
+					Message: &message,
+					Body:    "Error texto",
+					Errors:  errors,
+				},
+				newBody: -1,
+			},
+			want: &Response[int]{
+				Status:  http.StatusBadRequest,
+				Message: &message,
+				Body:    -1,
+				Errors:  errors,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := MapWithBody(tt.args.original, tt.args.newBody); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("MapWithBody() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
