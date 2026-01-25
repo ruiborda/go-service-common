@@ -121,3 +121,18 @@ func Map[T any, R any](original *Response[T], transform func(T) R) *Response[R] 
 		Body:    transform(original.Body),
 	}
 }
+
+func MapWithoutBody[T any, R any](original *Response[T]) *Response[R] {
+	if original == nil {
+		return nil
+	}
+
+	var zero R
+
+	return &Response[R]{
+		Status:  original.Status,
+		Message: original.Message,
+		Errors:  original.Errors,
+		Body:    zero,
+	}
+}
